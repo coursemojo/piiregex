@@ -116,7 +116,7 @@ def test_street_addresses(pii_regex):
         "3 elm boulevard",
         "500 elm street ",
     ]
-    non_matching = ["101 main straight"]
+    non_matching = ["101 main straight", "7 by having Chiron save"]
 
     for s in matching:
         # Strings evaluate true.
@@ -169,9 +169,9 @@ def test_ukphones(pii_regex):
 
 def test_any_match(pii_regex):
     # This matches a phone number.
-    assert pii_regex.any_match('07123 123123') is True
+    assert pii_regex.any_match("07123 123123") is True
     # This should match nothing.
-    assert pii_regex.any_match('asdasdasdasdasd') is False
+    assert pii_regex.any_match("asdasdasdasdasd") is False
 
 
 def test_any_match_using_init_method():
@@ -179,6 +179,5 @@ def test_any_match_using_init_method():
     parsed_text = PiiRegex("07123 123123")
     assert parsed_text.any_match() is True
     # This should match nothing.
-    parsed_text = PiiRegex('asdasdasdasdasd')
+    parsed_text = PiiRegex("asdasdasdasdasd")
     assert parsed_text.any_match() is False
-
