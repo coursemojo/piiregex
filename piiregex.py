@@ -26,19 +26,23 @@ ipv6 = re.compile(
     re.VERBOSE | re.IGNORECASE | re.DOTALL,
 )
 
-credit_card = re.compile(u"((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])")
+credit_card = re.compile("((?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{15,16}))(?![\\d])")
 btc_address = re.compile(
     r"(?<![a-km-zA-HJ-NP-Z0-9])[13][a-km-zA-HJ-NP-Z0-9]{26,33}(?![a-km-zA-HJ-NP-Z0-9])"
 )
 street_address = re.compile(
-    r"\d{1,4} [\w\s]{1,20}(?:street|st|avenue|ave|road|rd|highway|hwy|square|sq|trail|trl|drive|dr|court|ct|park|parkway|pkwy|circle|cir|boulevard|blvd)\W?(?=\s|$)",
+    r"\b\d{1,4}\s+([A-Za-z0-9]+\s){0,4}(street|st|avenue|ave|road|rd|highway|hwy|square|sq|trail|trl|drive|dr|court|ct|park|parkway|pkwy|circle|cir|boulevard|blvd)\b",
     re.IGNORECASE,
 )
 zip_code = re.compile(r"\b\d{5}(?:[-\s]\d{4})?\b")
 po_box = re.compile(r"P\.? ?O\.? Box \d+", re.IGNORECASE)
 
-postcodes = re.compile(r"([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2})")
-ukphones = re.compile(r"^\s*\(?(020[7,8]{1}\)?[ ]?[1-9]{1}[0-9{2}[ ]?[0-9]{4})|(0[1-8]{1}[0-9]{3}\)?[ ]?[1-9]{1}[0-9]{2}[ ]?[0-9]{3})\s*$")
+postcodes = re.compile(
+    r"([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2})"
+)
+ukphones = re.compile(
+    r"^\s*\(?(020[7,8]{1}\)?[ ]?[1-9]{1}[0-9{2}[ ]?[0-9]{4})|(0[1-8]{1}[0-9]{3}\)?[ ]?[1-9]{1}[0-9]{2}[ ]?[0-9]{3})\s*$"
+)
 
 regexes = {
     "dates": date,
@@ -54,7 +58,7 @@ regexes = {
     "zip_codes": zip_code,
     "po_boxes": po_box,
     "postcodes": postcodes,
-    "ukphones": ukphones
+    "ukphones": ukphones,
 }
 
 
@@ -65,8 +69,7 @@ class regex:
 
     def __call__(self, *args):
         def regex_method(text=None):
-            return [x for x
-                    in self.regex.findall(text or self.obj.text)]
+            return [x for x in self.regex.findall(text or self.obj.text)]
 
         return regex_method
 
@@ -85,8 +88,7 @@ class PiiRegex(object):
                 setattr(self, key, method())
 
     def any_match(self, text=""):
-        """Scan through all available matches and try to match.
-        """
+        """Scan through all available matches and try to match."""
         if text:
             self.text = text
 
@@ -104,4 +106,3 @@ class PiiRegex(object):
                 matches.append(match)
 
         return True if matches else False
-
